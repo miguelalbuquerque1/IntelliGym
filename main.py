@@ -237,7 +237,7 @@ class telaPrincipalAluno(QMainWindow):
 
 class telaCadastroAluno(QDialog):
     def __init__(self, *args, **argvs):
-        super(telaCadastroAluno, self).__init__(*args, **kwargs)
+        super(telaCadastroAluno, self).__init__(*args, **argvs)
         self.ui = Ui_CadastroAlunoDialog()  # Supondo que você tenha a tela de cadastro de academia
         self.ui.setupUi(self)
 
@@ -248,8 +248,8 @@ class telaPrincipalProfessor(QMainWindow):
         self.ui.setupUi(self)
 
 class telaCadastroProfessor(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(telaCadastroProfessor, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **argvs):
+        super(telaCadastroProfessor, self).__init__(*args, **argvs)
         self.ui = Ui_CadastroProfessorWindow()  # Supondo que você tenha a tela de cadastro de academia
         self.ui.setupUi(self)
 
@@ -260,8 +260,8 @@ class telaPrincipalTurma(QMainWindow):
         self.ui.setupUi(self)
 
 class telaCadastroTurma(QDialog):
-    def __init__(self, *args, **kwargs):
-        super(telaCadastroTurma, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **argvs):
+        super(telaCadastroTurma, self).__init__(*args, **argvs)
         self.ui = Ui_CadastroTurmaWindow()  # Supondo que você tenha a tela de cadastro de academia
         self.ui.setupUi(self)
 
