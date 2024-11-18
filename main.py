@@ -7,7 +7,6 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtPrintSupport import *
 from PyQt5.uic import loadUi
 import os, sys
-
 import sqlite3
 from db.query import sqlite_db
 from db.query import adicionar_usuario
@@ -19,23 +18,92 @@ from telas.telaPrincipalAcademia import Ui_AcademiaMainWindow
 from telas.telaPrincipalProfessor import Ui_ProfessorMainWindow
 from telas.telaPrincipalTurma import Ui_TurmaMainWindow
 from telas.telaCadastroAcademia import Ui_CadastroAcademiaDialog
-from telas.telaCadastroAluno import Ui_CadastroAlunoWindow
+from telas.telaCadastroAluno import Ui_CadastroAlunoDialog
 from telas.telaCadastroProfessor import Ui_CadastroProfessorWindow
 from telas.telaCadastroTurma import Ui_CadastroTurmaWindow
 
+class GerenciadorJanela:
+    def __init__(self):
+        self.janela_atual = None
+
+    def trocar_janela(self, nova_janela):
+        if self.janela_atual is not None:
+            self.janela_atual.close()
+        self.janela_atual = nova_janela
+        self.janela_atual.show()
+
+# Inicialização do Gerenciador
+gerenciador = GerenciadorJanela()
+
 
 class telaPrincipalAcademia(QMainWindow):
-    def __init__(self, *args, **argvs):
+    def __init__(self, email, *args, **argvs):
         super(telaPrincipalAcademia, self).__init__(*args, **argvs)
         self.ui = Ui_AcademiaMainWindow()
         self.ui.setupUi(self)
 
+        # Obter o ID do usuário logado pelo e-mail
+        self.admin_id = self.buscar_id_por_email(email)
+        if not self.admin_id:
+            QMessageBox.critical(self, "Erro", "Não foi possível identificar o usuário logado!")
+            sys.exit()
+
         # Conectar o item 'Listar' no menu para a função de listar academias
         self.ui.actionListar.triggered.connect(self.listar_academias)
-        self.ui.actionCadastrar.triggered.connect(self.abrir_janela_cadastro_academia)
+        self.ui.actionListar_3.triggered.connect(self.goToProfessor) #Trigger para a janela de Professor
+        self.ui.actionListar_4.triggered.connect(self.goToTurma) #Trigger para a janela de Turmas   
+        self.ui.actionListar_5.triggered.connect(self.goToAluno) #Trigger para a janela de Alunos
+        self.ui.actionVoltar_ao_Login.triggered.connect(self.goToLogin) #Trigger para a janela de volta ao login
+        self.ui.pushButton_2.clicked.connect(self.abrir_janela_cadastro_academia)
+        self.ui.pushButton_3.clicked.connect(self.excluir_academia)
+
+        # Adicionar evento para selecionar a linha na tabela
+        self.ui.tableWidget.cellClicked.connect(self.selecionar_academia)
+
+        self.academia_selecionada_id = None  # Variável para armazenar o ID da academia selecionada
+
+    def goToLogin(self):
+        nova_janela = telaLogin()
+        gerenciador.trocar_janela(self,nova_janela)
+    
+    def goToProfessor(self):
+        self.window = telaPrincipalProfessor()
+        self.window.show()
+        self.close()
+    
+    def goToAluno(self):
+        self.window = telaPrincipalAluno()
+        self.window.show()
+        self.close()
+    
+    def goToTurma(self):
+        self.window = telaPrincipalTurma()
+        self.window.show()
+        self.close()
+
+    @staticmethod
+    def buscar_id_por_email(email):
+        try:
+            conn = sqlite3.connect('academia.db')
+            cursor = conn.cursor()
+
+            # Consulta para buscar o ID com base no e-mail
+            cursor.execute("SELECT id FROM Usuarios WHERE email = ?", (email,))
+            resultado = cursor.fetchone()
+
+            conn.close()
+
+            # Retorna o ID se encontrado, caso contrário retorna None
+            if resultado:
+                return resultado[0]
+            return None
+        except sqlite3.Error as e:
+            print(f"Erro ao buscar ID por e-mail: {e}")
+            return None
 
     def abrir_janela_cadastro_academia(self):
-        self.window = telaCadastroAcademia()
+        # Passar o admin_id para a tela de cadastro de academia
+        self.window = telaCadastroAcademia(self.admin_id)
         self.window.exec()
 
     def listar_academias(self):
@@ -45,7 +113,7 @@ class telaPrincipalAcademia(QMainWindow):
             cursor = conn.cursor()
 
             # Consulta SQL para buscar todas as academias
-            cursor.execute("SELECT id, nome, endereco, telefone FROM Academias")  # Modifique conforme o seu modelo de banco
+            cursor.execute("SELECT id, nome, endereco, telefone FROM Academias")
             academias = cursor.fetchall()
 
             # Configurar o número de linhas da tabela com base no número de academias
@@ -53,61 +121,106 @@ class telaPrincipalAcademia(QMainWindow):
 
             # Preencher a tabela com os dados das academias
             for row_idx, academia in enumerate(academias):
-                for col_idx, data in enumerate(academia):
-                    self.ui.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(data)))
+                # Atribuir os dados corretamente para cada coluna
+                self.ui.tableWidget.setItem(row_idx, 0, QTableWidgetItem(str(academia[0])))  # ID
+                self.ui.tableWidget.setItem(row_idx, 1, QTableWidgetItem(academia[1]))  # Nome
+                self.ui.tableWidget.setItem(row_idx, 2, QTableWidgetItem(academia[3]))  # Telefone
+                self.ui.tableWidget.setItem(row_idx, 3, QTableWidgetItem(academia[2]))  # Endereço
 
             # Fecha a conexão com o banco de dados
             conn.close()
         except sqlite3.Error as e:
             QMessageBox.critical(self, "Erro", f"Erro ao listar academias: {str(e)}")
 
+    def selecionar_academia(self, row, column):
+        """
+        Função para capturar o ID da academia selecionada ao clicar na tabela.
+        """
+        academia_id_item = self.ui.tableWidget.item(row, 0)  # A primeira coluna é o ID
+        if academia_id_item:
+            self.academia_selecionada_id = int(academia_id_item.text())  # Armazena o ID da academia
+            print(f"Academia selecionada com ID: {self.academia_selecionada_id}")
+
+    def excluir_academia(self):
+        """
+        Função para excluir a academia selecionada.
+        """
+        if self.academia_selecionada_id is None:
+            QMessageBox.warning(self, "Aviso", "Selecione uma academia para excluir.")
+            return
+
+        resposta = QMessageBox.question(self, "Confirmar Exclusão", "Tem certeza que deseja excluir esta academia?",
+                                        QMessageBox.Yes | QMessageBox.No)
+        if resposta == QMessageBox.Yes:
+            try:
+                # Conexão com o banco de dados
+                conn = sqlite3.connect('academia.db')
+                cursor = conn.cursor()
+
+                # Excluir a academia
+                cursor.execute("DELETE FROM Academias WHERE id = ?", (self.academia_selecionada_id,))
+                conn.commit()
+
+                # Fechar a conexão
+                conn.close()
+
+                # Atualizar a lista de academias
+                self.listar_academias()
+
+                QMessageBox.information(self, "Sucesso", "Academia excluída com sucesso!")
+            except sqlite3.Error as e:
+                QMessageBox.critical(self, "Erro", f"Erro ao excluir academia: {str(e)}")
+
+
 class telaCadastroAcademia(QDialog):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, admin_id, *args, **kwargs):
         super(telaCadastroAcademia, self).__init__(*args, **kwargs)
         self.ui = Ui_CadastroAcademiaDialog()  # Supondo que você tenha a tela de cadastro de academia
         self.ui.setupUi(self)
-
-        # Conectar o botão de salvar para chamar o método de salvar ou atualizar academia
+        self.admin_id = admin_id  # Armazena o ID do usuário logado
+        print(admin_id)
+        # Conectar os botões
         self.ui.pushButton_salvar.clicked.connect(self.salvar_ou_atualizar_academia)
         self.ui.pushButton_cancelar.clicked.connect(self.close)
 
     def salvar_ou_atualizar_academia(self):
-        nome = self.ui.lineEditNome.text()
-        endereco = self.ui.lineEditEndereco.text()
-        telefone = self.ui.lineEditTelefone.text()
+        nome = self.ui.lineEdit_nome.text()
+        endereco = self.ui.lineEdit_endereco.text()
+        telefone = self.ui.lineEdit_telefone.text()
 
         if not nome or not endereco:
             QMessageBox.warning(self, "Erro", "Nome e endereço são obrigatórios!")
             return
 
         try:
-            # Verifica se a academia já existe (por nome ou id)
+            print("Conectando ao banco de dados...")  # Log antes de tentar a conexão
             conn = sqlite3.connect('academia.db')
             cursor = conn.cursor()
 
-            # Debugging
-            print(f"Tentando salvar academia: Nome={nome}, Endereço={endereco}, Telefone={telefone}")
+            print(f"Conectado ao banco. Tentando salvar academia: Nome={nome}, Endereço={endereco}, Telefone={telefone}, AdminID={self.admin_id}")
 
-            cursor.execute("SELECT id FROM Academias WHERE nome = ?", (nome,))
+            # Verifica se a academia já existe (por nome e admin_id)
+            cursor.execute("SELECT id FROM Academias WHERE nome = ? AND admin_id = ?", (nome, self.admin_id))
             academia_existente = cursor.fetchone()
 
-            if academia_existente:  # Se a academia existe, atualize
+            if academia_existente:  # Atualizar academia existente
                 id_academia = academia_existente[0]
                 cursor.execute("""
                     UPDATE Academias
                     SET nome = ?, endereco = ?, telefone = ?
-                    WHERE id = ?
-                """, (nome, endereco, telefone, id_academia))
+                    WHERE id = ? AND admin_id = ?
+                """, (nome, endereco, telefone, id_academia, self.admin_id))
                 QMessageBox.information(self, "Sucesso", "Academia atualizada com sucesso!")
-            else:  # Caso contrário, insira uma nova academia
+            else:  # Inserir nova academia
                 cursor.execute("""
-                    INSERT INTO Academias (nome, endereco, telefone)
-                    VALUES (?, ?, ?)
-                """, (nome, endereco, telefone))
+                    INSERT INTO Academias (nome, endereco, telefone, admin_id)
+                    VALUES (?, ?, ?, ?)
+                """, (nome, endereco, telefone, self.admin_id))
                 QMessageBox.information(self, "Sucesso", "Academia cadastrada com sucesso!")
 
             conn.commit()
             conn.close()
+            print("Academia salva ou atualizada com sucesso!")  # Log após o commit
             self.close()  # Fecha a janela após salvar ou atualizar
         except sqlite3.Error as e:
             QMessageBox.critical(self, "Erro", f"Erro ao salvar ou atualizar academia: {str(e)}")
@@ -116,17 +229,16 @@ class telaCadastroAcademia(QDialog):
             QMessageBox.critical(self, "Erro inesperado", f"Erro: {str(ex)}")
             print(f"Erro inesperado: {ex}")  # Exibe no console para análise
 
-
 class telaPrincipalAluno(QMainWindow):
-    def __init__(self, *args, **argvs):
-        super(telaPrincipalAluno).__init__(*args, **argvs)
+    def __init__(self, email, *args, **argvs):
+        super(telaPrincipalAluno, self).__init__(*args, **argvs)
         self.ui = Ui_AlunoMainWindow()
-        self.ui.setupUi(self)
+                
 
 class telaCadastroAluno(QDialog):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **argvs):
         super(telaCadastroAluno, self).__init__(*args, **kwargs)
-        self.ui = Ui_CadastroAlunoWindow()  # Supondo que você tenha a tela de cadastro de academia
+        self.ui = Ui_CadastroAlunoDialog()  # Supondo que você tenha a tela de cadastro de academia
         self.ui.setupUi(self)
 
 class telaPrincipalProfessor(QMainWindow):
@@ -211,9 +323,9 @@ class telaLogin(QDialog):
 
                 # Abrir a tela correspondente ao tipo de usuário
                 if tipo_usuario == 1:  # Admin
-                    self.window = telaPrincipalAcademia()
+                    self.window = telaPrincipalAcademia(email)
                 elif tipo_usuario == 0:  # Gerente
-                    self.window = telaPrincipalAcademia()
+                    self.window = telaPrincipalAcademia(email)
                 else:
                     QMessageBox.warning(self, "Erro", "Tipo de usuário inválido!")
                     return
