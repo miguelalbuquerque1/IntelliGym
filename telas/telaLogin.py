@@ -54,7 +54,7 @@ class Ui_LoginDialog(object):
         Dialog.setWindowTitle(_translate("Login", "Tela de Login"))
         self.label.setText(_translate("Dialog", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">INTELLIGYM - SISTEMA DE GERENCIAMENTO DE ACADEMIAS</span></p></body></html>"))
         self.label_2.setText(_translate("Dialog", "<html><head/><body><p><span style=\" font-size:14pt;\">LOGIN</span></p></body></html>"))
-        self.label_3.setText(_translate("Dialog", "Nome de Usuário:"))
+        self.label_3.setText(_translate("Dialog", "Email:"))
         self.label_4.setText(_translate("Dialog", "Senha:"))
         self.btnLogin.setText(_translate("Dialog", "CONTINUAR"))
         self.btnRegistrar.setText(_translate("Dialog", "REGISTRAR-SE"))
