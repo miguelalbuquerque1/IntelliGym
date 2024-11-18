@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>537</width>
+    <height>488</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>511</width>
+      <height>351</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>131</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Listagem:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>261</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Pesquisar</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>30</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>OK</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>420</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ADICIONAR</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_3">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>420</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>EXCLUIR</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>537</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuInicio">
+    <property name="title">
+     <string>Academias</string>
+    </property>
+    <addaction name="actionCadastrar"/>
+    <addaction name="actionExcluir"/>
+    <addaction name="actionListar"/>
+   </widget>
+   <widget class="QMenu" name="menuGerentes">
+    <property name="title">
+     <string>Gerentes</string>
+    </property>
+    <addaction name="actionCadastrar_2"/>
+    <addaction name="actionExcluir_2"/>
+    <addaction name="actionListar_2"/>
+   </widget>
+   <widget class="QMenu" name="menuProfessores">
+    <property name="title">
+     <string>Professores</string>
+    </property>
+    <addaction name="actionCadastrar_3"/>
+    <addaction name="actionExluir"/>
+    <addaction name="actionListar_3"/>
+   </widget>
+   <widget class="QMenu" name="menuTurmas">
+    <property name="title">
+     <string>Turmas</string>
+    </property>
+    <addaction name="actionCadastrar_4"/>
+    <addaction name="actionExcluir_3"/>
+    <addaction name="actionListar_4"/>
+   </widget>
+   <widget class="QMenu" name="menuAlunos">
+    <property name="title">
+     <string>Alunos</string>
+    </property>
+    <addaction name="actionCadastrar_5"/>
+    <addaction name="actionExcluir_4"/>
+    <addaction name="actionListar_5"/>
+   </widget>
+   <widget class="QMenu" name="menuSair">
+    <property name="title">
+     <string>Sair</string>
+    </property>
+    <addaction name="actionVoltar_ao_Login"/>
+   </widget>
+   <addaction name="menuGerentes"/>
+   <addaction name="menuInicio"/>
+   <addaction name="menuProfessores"/>
+   <addaction name="menuTurmas"/>
+   <addaction name="menuAlunos"/>
+   <addaction name="menuSair"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionCadastrar">
+   <property name="text">
+    <string>Cadastrar</string>
+   </property>
+  </action>
+  <action name="actionExcluir">
+   <property name="text">
+    <string>Excluir</string>
+   </property>
+  </action>
+  <action name="actionListar">
+   <property name="text">
+    <string>Listar</string>
+   </property>
+  </action>
+  <action name="actionCadastrar_2">
+   <property name="text">
+    <string>Cadastrar</string>
+   </property>
+  </action>
+  <action name="actionExcluir_2">
+   <property name="text">
+    <string>Excluir</string>
+   </property>
+  </action>
+  <action name="actionListar_2">
+   <property name="text">
+    <string>Listar</string>
+   </property>
+  </action>
+  <action name="actionCadastrar_3">
+   <property name="text">
+    <string>Cadastrar</string>
+   </property>
+  </action>
+  <action name="actionExluir">
+   <property name="text">
+    <string>Exluir</string>
+   </property>
+  </action>
+  <action name="actionListar_3">
+   <property name="text">
+    <string>Listar</string>
+   </property>
+  </action>
+  <action name="actionCadastrar_4">
+   <property name="text">
+    <string>Cadastrar</string>
+   </property>
+  </action>
+  <action name="actionExcluir_3">
+   <property name="text">
+    <string>Excluir</string>
+   </property>
+  </action>
+  <action name="actionListar_4">
+   <property name="text">
+    <string>Listar</string>
+   </property>
+  </action>
+  <action name="actionCadastrar_5">
+   <property name="text">
+    <string>Cadastrar</string>
+   </property>
+  </action>
+  <action name="actionExcluir_4">
+   <property name="text">
+    <string>Excluir</string>
+   </property>
+  </action>
+  <action name="actionListar_5">
+   <property name="text">
+    <string>Listar</string>
+   </property>
+  </action>
+  <action name="actionVoltar_ao_Login">
+   <property name="text">
+    <string>Voltar ao Login</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
