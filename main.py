@@ -27,10 +27,18 @@ class GerenciadorJanela:
         self.janela_atual = None
 
     def trocar_janela(self, nova_janela):
-        if self.janela_atual is not None:
-            self.janela_atual.close()
-        self.janela_atual = nova_janela
-        self.janela_atual.show()
+        if nova_janela is None:
+            print("Erro: tentativa de trocar para uma janela inválida.")
+            return
+
+        try:
+            if self.janela_atual is not None:
+                self.janela_atual.close()
+            self.janela_atual = nova_janela
+            self.janela_atual.show()
+        except Exception as e:
+            print(f"Erro ao trocar janela: {e}")
+
 
 # Inicialização do Gerenciador
 gerenciador = GerenciadorJanela()
@@ -67,19 +75,17 @@ class telaPrincipalAcademia(QMainWindow):
         gerenciador.trocar_janela(self,nova_janela)
     
     def goToProfessor(self):
-        self.window = telaPrincipalProfessor()
-        self.window.show()
-        self.close()
+        nova_janela = telaPrincipalProfessor(self)
+        gerenciador.trocar_janela(nova_janela)
+
     
     def goToAluno(self):
-        self.window = telaPrincipalAluno()
-        self.window.show()
-        self.close()
+        nova_janela = telaPrincipalAluno(self)
+        gerenciador.trocar_janela(nova_janela)
     
     def goToTurma(self):
-        self.window = telaPrincipalTurma()
-        self.window.show()
-        self.close()
+        nova_janela = telaPrincipalTurma(self)
+        gerenciador.trocar_janela(nova_janela)
 
     @staticmethod
     def buscar_id_por_email(email):
